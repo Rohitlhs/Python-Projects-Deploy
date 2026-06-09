@@ -32,12 +32,12 @@ from utils.redis_delete_utils import _safe_session_id, _delete_redis_session_key
 from typing import Optional, Dict, Any
 import pandas as pd
 from app.langgraph_config.nodes.session_dataset_loader import session_dataset_loader_node
-from utils.app_activity_history import save_app_activity_history, fetch_app_activity_history_questions, fetch_app_activity_history_dashboard
+# from utils.app_activity_history import save_app_activity_history, fetch_app_activity_history_questions, fetch_app_activity_history_dashboard
 
 ## FOR GLOBAL SERVICE
-from global_service.global_service_pkg_config import *
-from global_service.global_service_pkg_config import log_debug_request
-from global_service_fastapi_pkg.debug_log_flag_manager import enable_debug_logs, disable_debug_logs
+# from global_service.global_service_pkg_config import *
+# from global_service.global_service_pkg_config import log_debug_request
+# from global_service_fastapi_pkg.debug_log_flag_manager import enable_debug_logs, disable_debug_logs
 
 from app.langgraph_config.graph.graph_builder import Table_GPT
 from app.langgraph_config.node_utils.stage_labels import STAGE_LABELS
@@ -84,31 +84,31 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 load_config()
 
 # Custom log collector for GLOBAL SERVICE
-class RequestLogCollector(logging.Handler):
-    def __init__(self):
-        super().__init__()
-        self.logs = []
-        self.counter = 1
-    def emit(self, record):
-        msg = self.format(record)
-        numbered_msg = f"{self.counter} {msg}"
-        self.logs.append(numbered_msg)
-        self.counter += 1
+# class RequestLogCollector(logging.Handler):
+#     def __init__(self):
+#         super().__init__()
+#         self.logs = []
+#         self.counter = 1
+#     def emit(self, record):
+#         msg = self.format(record)
+#         numbered_msg = f"{self.counter} {msg}"
+#         self.logs.append(numbered_msg)
+#         self.counter += 1
         
-log_collector = RequestLogCollector()
-formatter = logging.Formatter('%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-log_collector.setFormatter(formatter)
-step_logger = StepLogger()
-app_version = get_app_version()
+# log_collector = RequestLogCollector()
+# formatter = logging.Formatter('%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+# log_collector.setFormatter(formatter)
+# step_logger = StepLogger()
+# app_version = get_app_version()
 
 ######################################### DEBUG LOGS GLOBAL SERVICE ENDPOINTS ##########################################
-class DebugLogFlagRequest(BaseModel):
-    save_debug_logs: bool
-    debug_active_by: Optional[str] = None
-    debug_end_by: Optional[str] = None
-    start_time: Optional[str] = None
-    end_time: Optional[str] = None
-    app_code: str = "L-PYA100"  # Default app code
+# class DebugLogFlagRequest(BaseModel):
+#     save_debug_logs: bool
+#     debug_active_by: Optional[str] = None
+#     debug_end_by: Optional[str] = None
+#     start_time: Optional[str] = None
+#     end_time: Optional[str] = None
+#     app_code: str = "L-PYA100"  # Default app code
 
 class SessionDeleteRequest(BaseModel):
     user_ref_no: str
@@ -118,30 +118,30 @@ class HistoryFetchRequest(BaseModel):
     payload_data: Dict[str, Any] = {}
     limit: int = 50
 
-@app.post("/api/agentai/table_gpt_plus/set_debug_log_flag")
-async def set_debug_log_flag(data: DebugLogFlagRequest):
-    if data.save_debug_logs:
-        result = enable_debug_logs(data.debug_active_by)
-    else:
-        result = disable_debug_logs(
-            debug_active_by=data.debug_active_by,
-            debug_end_by=data.debug_end_by,
-            start_time=data.start_time,
-            end_time=data.end_time,
-            app_code=data.app_code  # Use the configured app code
-        )
-    return result
+# @app.post("/api/agentai/table_gpt_plus/set_debug_log_flag")
+# async def set_debug_log_flag(data: DebugLogFlagRequest):
+#     if data.save_debug_logs:
+#         result = enable_debug_logs(data.debug_active_by)
+#     else:
+#         result = disable_debug_logs(
+#             debug_active_by=data.debug_active_by,
+#             debug_end_by=data.debug_end_by,
+#             start_time=data.start_time,
+#             end_time=data.end_time,
+#             app_code=data.app_code  # Use the configured app code
+#         )
+#     return result
 
-@app.get("/api/agentai/table_gpt_plus/debug_log_status")
-async def get_debug_log_status():
-    return {
-        "debug_flag": getattr(config, "SAVE_DEBUG_LOGS", False),
-        "start_by": getattr(config, "debug_active_by", None),
-        "start_time": getattr(config, "start_time", None),
-        "end_time": getattr(config, "end_time", None),
-        "end_by": getattr(config, "debug_end_by", None),
-        "app_code": getattr(config, "APP_CODE", None)
-    }
+# @app.get("/api/agentai/table_gpt_plus/debug_log_status")
+# async def get_debug_log_status():
+#     return {
+#         "debug_flag": getattr(config, "SAVE_DEBUG_LOGS", False),
+#         "start_by": getattr(config, "debug_active_by", None),
+#         "start_time": getattr(config, "start_time", None),
+#         "end_time": getattr(config, "end_time", None),
+#         "end_by": getattr(config, "debug_end_by", None),
+#         "app_code": getattr(config, "APP_CODE", None)
+#     }
 #################################### END DEBUG LOGS GLOBAL SERVICE ENDPOINTS ##################################
 
 # Initialize handlers  
@@ -195,12 +195,12 @@ async def shutdown_session_cleanup():
 @app.post("/api/agentai/table_gpt_plus/suggestions")
 async def suggestions(request: Request):
     # Attach log collector GLOBAL SERVICE
-    main_logger.addHandler(log_collector)
-    if debug_logger:
-        debug_logger.addHandler(log_collector)
-    log_collector.logs.clear()
-    collected_logs = None
-    step_logger.log("Suggestions endpoint called")
+    # main_logger.addHandler(log_collector)
+    # if debug_logger:
+    #     debug_logger.addHandler(log_collector)
+    # log_collector.logs.clear()
+    # collected_logs = None
+    # step_logger.log("Suggestions endpoint called")
     payload_request_status_code = "Success (200 OK)"
     payload_response_status_msg = None
     
@@ -219,7 +219,7 @@ async def suggestions(request: Request):
             except Exception:
                 pass
     main_logger.info(f"----------------->Suggestions request received at {request_time} ")
-    step_logger.log(f"Suggestions request received at {request_time}  with data: {payload_identifier}")
+    # step_logger.log(f"Suggestions request received at {request_time}  with data: {payload_identifier}")
     try:
         context = payload_data.get('table_data')
         table_context = payload_data.get('table_context')
@@ -242,19 +242,19 @@ async def suggestions(request: Request):
             response_body_str = suggestions.body.decode()  # Get the actual JSON string
         else:
             response_body_str = json.dumps(suggestions)
-        step_logger.log(f"Suggestions response: {response_body_str}")
+        # step_logger.log(f"Suggestions response: {response_body_str}")
         
         # GLOBAL SERVICE LOGS
-        step_logger.log(f"Chat response generated")
-        payload_request_status_code = "Success (200 OK)"
-        payload_response_status_msg = "Success (200 OK)"
-        log_request(
-            request, step_logger, request_body=json.dumps(request_data), response_body=response_body_str, log_type="INFO", app_version=app_version,
-            payload_request_status_code=payload_request_status_code,
-            payload_response_status_msg=payload_response_status_msg
-        )
-        collected_logs = '\n'.join(log_collector.logs)
-        log_debug_request(request, request_body=json.dumps(request_data), response_body=response_body_str, debug_logs=collected_logs)
+        # step_logger.log(f"Chat response generated")
+        # payload_request_status_code = "Success (200 OK)"
+        # payload_response_status_msg = "Success (200 OK)"
+        # log_request(
+        #     request, step_logger, request_body=json.dumps(request_data), response_body=response_body_str, log_type="INFO", app_version=app_version,
+        #     payload_request_status_code=payload_request_status_code,
+        #     payload_response_status_msg=payload_response_status_msg
+        # )
+        # collected_logs = '\n'.join(log_collector.logs)
+        # log_debug_request(request, request_body=json.dumps(request_data), response_body=response_body_str, debug_logs=collected_logs)
         return suggestions
     except Exception as e:
         main_logger.error(f"Error: {str(e)}")
@@ -262,28 +262,28 @@ async def suggestions(request: Request):
             debug_logger.error(f"Error: {str(e)}")
             
         # GLOBAL SERVICE LOGS 
-        step_logger.log("chat response generated (error)")
-        payload_request_status_code = "Failure (400 Bad Request)"
-        payload_response_status_msg = "Failure (400 Bad Request)"
-        log_request(
-            request, step_logger, request_body=json.dumps(request_data), log_type="INFO", app_version=app_version,
-            payload_request_status_code=payload_request_status_code,
-            payload_response_status_msg=payload_response_status_msg
-        )
-        collected_logs = '\n'.join(log_collector.logs)
-        log_debug_request(request, request_body=json.dumps(request_data), debug_logs=collected_logs)
+        # step_logger.log("chat response generated (error)")
+        # payload_request_status_code = "Failure (400 Bad Request)"
+        # payload_response_status_msg = "Failure (400 Bad Request)"
+        # log_request(
+        #     request, step_logger, request_body=json.dumps(request_data), log_type="INFO", app_version=app_version,
+        #     payload_request_status_code=payload_request_status_code,
+        #     payload_response_status_msg=payload_response_status_msg
+        # )
+        # collected_logs = '\n'.join(log_collector.logs)
+        # log_debug_request(request, request_body=json.dumps(request_data), debug_logs=collected_logs)
         return JSONResponse(content={'answer': "Sorry, there was an error processing your request.", 'error': str(e), 'status': 'error'}, status_code=500)  
 
 ##################################################### Chat Endpoint #####################################
 @app.post("/api/agentai/table_gpt_plus/chat")
 async def chat(request: Request):
     # Attach log collector GLOBAL SERVICE
-    main_logger.addHandler(log_collector)
-    if debug_logger:
-        debug_logger.addHandler(log_collector)
-    log_collector.logs.clear()
-    collected_logs = None
-    step_logger.log("Chat endpoint called")
+    # main_logger.addHandler(log_collector)
+    # if debug_logger:
+    #     debug_logger.addHandler(log_collector)
+    # log_collector.logs.clear()
+    # collected_logs = None
+    # step_logger.log("Chat endpoint called")
     payload_request_status_code = "Success (200 OK)"
     payload_response_status_msg = None
     
@@ -307,7 +307,7 @@ async def chat(request: Request):
                 pass
             
     main_logger.info(f"----------------->Chat request received at {request_time} ")
-    step_logger.log(f"Chat request received at {request_time}  with data: {payload_identifier} and user_query: {payload_data.get('user_query', '')}")
+    # step_logger.log(f"Chat request received at {request_time}  with data: {payload_identifier} and user_query: {payload_data.get('user_query', '')}")
 
     try:
         result = Table_GPT.invoke(
@@ -351,31 +351,31 @@ async def chat(request: Request):
     
     main_logger.info(f"Chat response generated: {response_payload}")
 
-    try:
-        save_app_activity_history(
-            endpoint="/api/agentai/table_gpt_plus/chat",
-            payload_identifier=payload_identifier,
-            payload_data=payload_data,
-            ai_response=response_payload,
-        )
-    except Exception:
-        pass
+    # try:
+    #     save_app_activity_history(
+    #         endpoint="/api/agentai/table_gpt_plus/chat",
+    #         payload_identifier=payload_identifier,
+    #         payload_data=payload_data,
+    #         ai_response=response_payload,
+    #     )
+    # except Exception:
+    #     pass
     
-    step_logger.log("Chat response generated")
-    payload_request_status_code = "Success (200 OK)"
-    payload_response_status_msg = "Success (200 OK)"
-    log_request(
-        request, step_logger, request_body=json.dumps(request_data), response_body=json.dumps(response_payload), log_type="INFO", app_version=app_version,
-        payload_request_status_code=payload_request_status_code,
-        payload_response_status_msg=payload_response_status_msg
-    )
-    collected_logs = '\n'.join(log_collector.logs)
-    log_debug_request(
-        request,
-        request_body=json.dumps(request_data),
-        response_body=json.dumps(response_payload),
-        debug_logs=collected_logs,
-    )
+    # step_logger.log("Chat response generated")
+    # payload_request_status_code = "Success (200 OK)"
+    # payload_response_status_msg = "Success (200 OK)"
+    # log_request(
+    #     request, step_logger, request_body=json.dumps(request_data), response_body=json.dumps(response_payload), log_type="INFO", app_version=app_version,
+    #     payload_request_status_code=payload_request_status_code,
+    #     payload_response_status_msg=payload_response_status_msg
+    # )
+    # collected_logs = '\n'.join(log_collector.logs)
+    # log_debug_request(
+    #     request,
+    #     request_body=json.dumps(request_data),
+    #     response_body=json.dumps(response_payload),
+    #     debug_logs=collected_logs,
+    # )
 
     return JSONResponse(content=response_payload, status_code=200)
     
@@ -385,12 +385,12 @@ async def chat_stream(request: Request):
     execution_started_at = time.perf_counter()
 
     # Attach log collector GLOBAL SERVICE
-    main_logger.addHandler(log_collector)
-    if debug_logger:
-        debug_logger.addHandler(log_collector)
-    log_collector.logs.clear()
-    collected_logs = None
-    step_logger.log("Chat stream endpoint called")
+    # main_logger.addHandler(log_collector)
+    # if debug_logger:
+    #     debug_logger.addHandler(log_collector)
+    # log_collector.logs.clear()
+    # collected_logs = None
+    # step_logger.log("Chat stream endpoint called")
     payload_request_status_code = "Success (200 OK)"
     payload_response_status_msg = None
     
@@ -413,7 +413,7 @@ async def chat_stream(request: Request):
                 pass
             
     main_logger.info(f"----------------->Chat stream request received at {request_time} ")
-    step_logger.log(f"Chat stream request received at {request_time}  with data: {payload_identifier} and user_query: {payload_data.get('user_query', '')}")
+    # step_logger.log(f"Chat stream request received at {request_time}  with data: {payload_identifier} and user_query: {payload_data.get('user_query', '')}")
 
     input_state = {
         "session_id": session_id,
@@ -494,28 +494,28 @@ async def chat_stream(request: Request):
                 "execution_error": latest_meta.get("execution_error"),
                 "stages": stage_history,
             }
-            try:
-                save_app_activity_history(
-                    endpoint="/api/agentai/table_gpt_plus/chat/stream",
-                    payload_identifier=payload_identifier,
-                    payload_data=payload_data,
-                    ai_response=response_payload,
-                )
-            except Exception:
-                pass
-            step_logger.log("chat response generated (client disconnected)")
-            log_request(
-                request, step_logger, request_body=json.dumps(request_data), response_body=json.dumps(response_payload), log_type="INFO", app_version=app_version,
-                payload_request_status_code="Failure (499 Client Closed Request)",
-                payload_response_status_msg="Failure (499 Client Closed Request)"
-            )
-            collected_logs = '\n'.join(log_collector.logs)
-            log_debug_request(
-                request,
-                request_body=json.dumps(request_data),
-                response_body=json.dumps(response_payload),
-                debug_logs=collected_logs,
-            )
+            # try:
+            #     save_app_activity_history(
+            #         endpoint="/api/agentai/table_gpt_plus/chat/stream",
+            #         payload_identifier=payload_identifier,
+            #         payload_data=payload_data,
+            #         ai_response=response_payload,
+            #     )
+            # except Exception:
+            #     pass
+            # step_logger.log("chat response generated (client disconnected)")
+            # log_request(
+            #     request, step_logger, request_body=json.dumps(request_data), response_body=json.dumps(response_payload), log_type="INFO", app_version=app_version,
+            #     payload_request_status_code="Failure (499 Client Closed Request)",
+            #     payload_response_status_msg="Failure (499 Client Closed Request)"
+            # )
+            # collected_logs = '\n'.join(log_collector.logs)
+            # log_debug_request(
+            #     request,
+            #     request_body=json.dumps(request_data),
+            #     response_body=json.dumps(response_payload),
+            #     debug_logs=collected_logs,
+            # )
             raise
         except (ConnectionResetError, BrokenPipeError, OSError) as e:
             # Handle connection errors gracefully - these occur when client abruptly disconnects
@@ -529,15 +529,15 @@ async def chat_stream(request: Request):
                 "execution_error": latest_meta.get("execution_error"),
                 "stages": stage_history,
             }
-            try:
-                save_app_activity_history(
-                    endpoint="/api/agentai/table_gpt_plus/chat/stream",
-                    payload_identifier=payload_identifier,
-                    payload_data=payload_data,
-                    ai_response=response_payload,
-                )
-            except Exception:
-                pass
+            # try:
+            #     save_app_activity_history(
+            #         endpoint="/api/agentai/table_gpt_plus/chat/stream",
+            #         payload_identifier=payload_identifier,
+            #         payload_data=payload_data,
+            #         ai_response=response_payload,
+            #     )
+            # except Exception:
+            #     pass
             # Don't re-raise connection errors - client is already gone
             return
         except Exception as e:
@@ -578,88 +578,87 @@ async def chat_stream(request: Request):
         }
         main_logger.info(f"Chat stream final response: {response_payload}")
         main_logger.info(f"Chat stream final Answer: {latest_final_answer} ")
-        print(f"===========>>>>> Toal execution time for chat stream: {execution_time_seconds} seconds ({execution_time_ms} ms) <<<<<===========")
 
-        try:
-            save_app_activity_history(
-                endpoint="/api/agentai/table_gpt_plus/chat/stream",
-                payload_identifier=payload_identifier,
-                payload_data=payload_data,
-                ai_response=response_payload,
-            )
-        except Exception:
-            pass
-        step_logger.log("Chat stream response generated with Final Answer: \n" + str(latest_final_answer[:1000]))
-        payload_request_status_code = "Success (200 OK)" if final_status == "success" else "Failure (500 Internal Server Error)"
-        payload_response_status_msg = payload_request_status_code
-        log_request(
-            request, step_logger, request_body=json.dumps(request_data), response_body=json.dumps(response_payload), log_type="INFO", app_version=app_version,
-            payload_request_status_code=payload_request_status_code,
-            payload_response_status_msg=payload_response_status_msg
-        )
-        collected_logs = '\n'.join(log_collector.logs)
-        log_debug_request(
-            request,
-            request_body=json.dumps(request_data),
-            response_body=json.dumps(response_payload),
-            debug_logs=collected_logs,
-        )
+        # try:
+        #     save_app_activity_history(
+        #         endpoint="/api/agentai/table_gpt_plus/chat/stream",
+        #         payload_identifier=payload_identifier,
+        #         payload_data=payload_data,
+        #         ai_response=response_payload,
+        #     )
+        # except Exception:
+        #     pass
+        # step_logger.log("Chat stream response generated with Final Answer: \n" + str(latest_final_answer[:1000]))
+        # payload_request_status_code = "Success (200 OK)" if final_status == "success" else "Failure (500 Internal Server Error)"
+        # payload_response_status_msg = payload_request_status_code
+        # log_request(
+        #     request, step_logger, request_body=json.dumps(request_data), response_body=json.dumps(response_payload), log_type="INFO", app_version=app_version,
+        #     payload_request_status_code=payload_request_status_code,
+        #     payload_response_status_msg=payload_response_status_msg
+        # )
+        # collected_logs = '\n'.join(log_collector.logs)
+        # log_debug_request(
+        #     request,
+        #     request_body=json.dumps(request_data),
+        #     response_body=json.dumps(response_payload),
+        #     debug_logs=collected_logs,
+        # )
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 ############# CHAT HISTORY ENDPOINT TO FETCH PAST USER QUESTIONS FOR THE SAME APP/USER/OBJECT #############
-@app.post("/api/agentai/table_gpt_plus/history")
-async def get_app_activity_history(data: HistoryFetchRequest):
-    payload_identifier = data.payload_identifier or {}
-    payload_data = data.payload_data or {}
+# @app.post("/api/agentai/table_gpt_plus/history")
+# async def get_app_activity_history(data: HistoryFetchRequest):
+    # payload_identifier = data.payload_identifier or {}
+    # payload_data = data.payload_data or {}
 
-    appkey = payload_identifier.get("appkey") or payload_data.get("appkey")
-    user_code = payload_identifier.get("user_code") or payload_data.get("user_code")
-    wma_object_code = (
-        payload_identifier.get("wma_object_code")
-        or payload_identifier.get("wmaObjectCode")
-        or payload_data.get("wma_object_code")
-        or payload_data.get("wmaObjectCode")
-    )
-    app_page_frame_seqid = (
-        payload_identifier.get("app_page_frame_seqid")
-        or payload_identifier.get("appPageFrameSeqid")
-        or payload_data.get("app_page_frame_seqid")
-        or payload_data.get("appPageFrameSeqid")
-        or payload_data.get("frame_id")
-    )
+    # appkey = payload_identifier.get("appkey") or payload_data.get("appkey")
+    # user_code = payload_identifier.get("user_code") or payload_data.get("user_code")
+    # wma_object_code = (
+    #     payload_identifier.get("wma_object_code")
+    #     or payload_identifier.get("wmaObjectCode")
+    #     or payload_data.get("wma_object_code")
+    #     or payload_data.get("wmaObjectCode")
+    # )
+    # app_page_frame_seqid = (
+    #     payload_identifier.get("app_page_frame_seqid")
+    #     or payload_identifier.get("appPageFrameSeqid")
+    #     or payload_data.get("app_page_frame_seqid")
+    #     or payload_data.get("appPageFrameSeqid")
+    #     or payload_data.get("frame_id")
+    # )
 
-    # For TABLE_GPT_PLUS, set defaults and relax requirements
-    if appkey == "TABLE_GPT_PLUS" or payload_identifier.get("appkey") == "TABLE_GPT_PLUS":
-        appkey = "TABLE_GPT_PLUS"
-        user_code = user_code or "TABLE_GPT_PLUS_USER"
-        app_page_frame_seqid = app_page_frame_seqid or wma_object_code or "TABLE_GPT_PLUS_FRAME"
+    # # For TABLE_GPT_PLUS, set defaults and relax requirements
+    # if appkey == "TABLE_GPT_PLUS" or payload_identifier.get("appkey") == "TABLE_GPT_PLUS":
+    #     appkey = "TABLE_GPT_PLUS"
+    #     user_code = user_code or "TABLE_GPT_PLUS_USER"
+    #     app_page_frame_seqid = app_page_frame_seqid or wma_object_code or "TABLE_GPT_PLUS_FRAME"
 
-    missing = []
-    if not appkey:
-        missing.append("appkey")
-    if not wma_object_code:
-        missing.append("wma_object_code")
-    if not user_code:
-        missing.append("user_code")
-    if not app_page_frame_seqid:
-        missing.append("app_page_frame_seqid")
+    # missing = []
+    # if not appkey:
+    #     missing.append("appkey")
+    # if not wma_object_code:
+    #     missing.append("wma_object_code")
+    # if not user_code:
+    #     missing.append("user_code")
+    # if not app_page_frame_seqid:
+    #     missing.append("app_page_frame_seqid")
 
-    if missing:
-        raise HTTPException(status_code=400, detail=f"Missing required fields: {', '.join(missing)}")
+    # if missing:
+    #     raise HTTPException(status_code=400, detail=f"Missing required fields: {', '.join(missing)}")
 
-    try:
-        questions = fetch_app_activity_history_questions(
-            appkey=str(appkey),
-            user_code=str(user_code),
-            wma_object_code=str(wma_object_code),
-            app_page_frame_seqid=str(app_page_frame_seqid),
-            limit=data.limit,
-        )
-        return JSONResponse(content={"success": True, "questions": questions}, status_code=200)
-    except Exception as e:
-        main_logger.error(f"Failed to fetch app activity history: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch history")
+    # try:
+    #     questions = fetch_app_activity_history_questions(
+    #         appkey=str(appkey),
+    #         user_code=str(user_code),
+    #         wma_object_code=str(wma_object_code),
+    #         app_page_frame_seqid=str(app_page_frame_seqid),
+    #         limit=data.limit,
+    #     )
+    #     return JSONResponse(content={"success": True, "questions": questions}, status_code=200)
+    # except Exception as e:
+    #     main_logger.error(f"Failed to fetch app activity history: {e}")
+    #     raise HTTPException(status_code=500, detail="Failed to fetch history")
 
 
 class DashboardFetchRequest(BaseModel):
@@ -674,22 +673,22 @@ class DashboardFetchRequest(BaseModel):
     offset: int = 0
 
 
-@app.post("/api/agentai/table_gpt_plus/dashboard")
-async def get_dashboard_data(data: DashboardFetchRequest):
-    try:
-        dashboard_data = fetch_app_activity_history_dashboard(
-            filter_type=data.filter_type,
-            appkey=data.appkey,
-            user_code=data.user_code,
-            wma_object_code=data.wma_object_code,
-            app_page_frame_seqid=data.app_page_frame_seqid,
-            limit=data.limit,
-            offset=data.offset,
-        )
-        return JSONResponse(content={"success": True, "data": dashboard_data}, status_code=200)
-    except Exception as e:
-        main_logger.error(f"Failed to fetch dashboard data: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch dashboard data")
+# @app.post("/api/agentai/table_gpt_plus/dashboard")
+# async def get_dashboard_data(data: DashboardFetchRequest):
+    # try:
+    #     dashboard_data = fetch_app_activity_history_dashboard(
+    #         filter_type=data.filter_type,
+    #         appkey=data.appkey,
+    #         user_code=data.user_code,
+    #         wma_object_code=data.wma_object_code,
+    #         app_page_frame_seqid=data.app_page_frame_seqid,
+    #         limit=data.limit,
+    #         offset=data.offset,
+    #     )
+    #     return JSONResponse(content={"success": True, "data": dashboard_data}, status_code=200)
+    # except Exception as e:
+    #     main_logger.error(f"Failed to fetch dashboard data: {e}")
+    #     raise HTTPException(status_code=500, detail="Failed to fetch dashboard data")
 
 
 class DashboardEmbedRequest(BaseModel):
@@ -702,31 +701,31 @@ class StoredCsvEmbedRequest(BaseModel):
     payload_data: Dict[str, Any] = {}
 
 
-@app.post("/api/agentai/table_gpt_plus/dashboard/embed")
-async def get_dashboard_embed_data(data: DashboardEmbedRequest):
-    payload_identifier = data.payload_identifier or {}
+# @app.post("/api/agentai/table_gpt_plus/dashboard/embed")
+# async def get_dashboard_embed_data(data: DashboardEmbedRequest):
+    # payload_identifier = data.payload_identifier or {}
 
-    appkey = payload_identifier.get("appkey")
-    wma_object_code = payload_identifier.get("wma_object_code")
-    app_page_frame_seqid = payload_identifier.get("app_page_frame_seqid")
-    iud_seqid = payload_identifier.get("iud_seqid")
-    user_code = payload_identifier.get("user_code")
+    # appkey = payload_identifier.get("appkey")
+    # wma_object_code = payload_identifier.get("wma_object_code")
+    # app_page_frame_seqid = payload_identifier.get("app_page_frame_seqid")
+    # iud_seqid = payload_identifier.get("iud_seqid")
+    # user_code = payload_identifier.get("user_code")
 
-    try:
-        dashboard_data = fetch_app_activity_history_dashboard(
-            filter_type="unique",
-            appkey=appkey,
-            wma_object_code=wma_object_code,
-            app_page_frame_seqid=app_page_frame_seqid,
-            iud_seqid=iud_seqid,
-            user_code=user_code,
-            limit=10,
-            offset=0,
-        )
-        return JSONResponse(content={"success": True, "data": dashboard_data}, status_code=200)
-    except Exception as e:
-        main_logger.error(f"Failed to fetch embed dashboard data: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch embed dashboard data")
+    # try:
+    #     dashboard_data = fetch_app_activity_history_dashboard(
+    #         filter_type="unique",
+    #         appkey=appkey,
+    #         wma_object_code=wma_object_code,
+    #         app_page_frame_seqid=app_page_frame_seqid,
+    #         iud_seqid=iud_seqid,
+    #         user_code=user_code,
+    #         limit=10,
+    #         offset=0,
+    #     )
+    #     return JSONResponse(content={"success": True, "data": dashboard_data}, status_code=200)
+    # except Exception as e:
+    #     main_logger.error(f"Failed to fetch embed dashboard data: {e}")
+    #     raise HTTPException(status_code=500, detail="Failed to fetch embed dashboard data")
 
 
 @app.post("/api/agentai/table_gpt_plus/dashboard/embed_url")

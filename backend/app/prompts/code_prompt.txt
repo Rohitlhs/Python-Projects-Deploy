@@ -36,6 +36,14 @@ Generating Python Code for Analysis:
 - Do not use to_string approach to show the table or output, always show the table output using to_html.
 - Always use the to_html in code for table output and do not use at all to_string.
 
+PERFORMANCE OPTIMIZATION TIPS:
+- For large datasets, load only necessary columns using.
+- Use vectorized pandas operations instead of loops (df[df['col'] > value] is faster than for loops)
+- Filter data early in the pipeline to reduce memory usage
+- Use .copy() only when necessary (avoid unnecessary data duplication)
+- For aggregations, use groupby() instead of iterative approaches
+- Use astype() to convert to optimal dtypes if needed (e.g., 'int32' instead of 'int64')
+
 NOTE:
 - Always use the html based output mention in the Pythopn Code generation Rules for getting the output table. Also give output in html when multiple table in code generated 
 - Do not use to_string approach to show the table or output, always show the table output using to_html.
